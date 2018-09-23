@@ -21,6 +21,9 @@ void LMH_Init(void){
         pinMode(LMH_SLAVE_SELECT, OUTPUT);
         SPI.begin();
         digitalWrite(LMH_SLAVE_SELECT, HIGH);
+        #if LMH_DEBUG_LOG == 1
+            Serial.println("LMH SPI started");
+        #endif
     #endif
 }
 
@@ -41,6 +44,11 @@ int  LMH_Tx(uint8_t* data, uint8_t* length){
         SPI.transfer(data, length);
         digitalWrite(LMH_SLAVE_SELECT, HIGH);
         SPI.endTransaction();
+        #if LMH_DEBUG_LOG == 1
+            Serial.println("LMH SPI sent:");
+            Serial.write(data, *length);
+            Serial.println();
+        #endif
     #endif
 }
 
@@ -80,9 +88,19 @@ int  LMH_WaitForRx(uint8_t* data, uint16_t* length, uint16_t exp_length){
         *length = header[LMH_HEADER_SIZE_OFFSET];
         digitalWrite(LMH_SLAVE_SELECT, HIGH);
         SPI.endTransaction();
-        if(millis() - time < LMH_TIMEOUT || exp_length != *length){
+        if(LMH_CheckRetVal(data) == LMH_ERR || millis() - time < LMH_TIMEOUT || exp_length != *length){
+            #if LMH_DEBUG_LOG == 1
+                Serial.println("LMH SPI received failed");
+            #endif
             return LMH_ERR;
         }
+        #if LMH_DEBUG_LOG == 1
+            Serial.println("LMH SPI received header:");
+            Serial.write(header, LMH_HEADER_LENGTH);
+            Serial.println("Data:");
+            Serial.write(data, *length);
+            Serial.println();
+        #endif
         return LMH_OK;
 
     #endif

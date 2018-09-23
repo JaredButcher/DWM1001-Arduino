@@ -34,6 +34,8 @@
     #define LMH_SPI_DATA_ORDER LSBFIRST //TODO could be wrong
 #endif
 
+#define LMH_DEBUG_LOG 1
+
 #define LMH_HEADER_LENGTH 1 //TODO could be wrong
 #define LMH_HEADER_SIZE_OFFSET 0 //TODO could be wrong
 #define LMH_TIMEOUT   1000
